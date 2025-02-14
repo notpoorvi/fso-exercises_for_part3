@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
-const phonebook_data = [
+let phonebook_data = [
     {
         "id": "1",
         "name": "Arto Hellas",
@@ -29,6 +29,19 @@ app.get('/api/persons', (request, response) => {
     response.json(phonebook_data)
 })
 
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = phonebook_data.find(person => person.id === id)
+    if (person) {
+        response.json(person)
+    }
+    else {
+        response.status(404).json({
+            error: "person not found"
+        }).end()
+    }
+})
+
 app.get('/info', (request, response) => {
     const num_people = phonebook_data.length
     const time = new Date()
@@ -36,6 +49,12 @@ app.get('/info', (request, response) => {
         <br/>
         <div>${time}<div/>`
     )
+})
+
+app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    phonebook_data = phonebook_data.filter(person => person.id !== id)
+    response.status(204).end()
 })
 
 const PORT = 3001

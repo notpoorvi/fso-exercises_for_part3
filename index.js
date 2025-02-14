@@ -51,6 +51,30 @@ app.get('/info', (request, response) => {
     )
 })
 
+app.post('/api/persons', (request, response) => {
+    const body = request.body
+    if (!body.name || !body.number) {
+        return response.status(400).json({
+            error: "empty request, name or number not defined"
+        })
+    }
+    else if (phonebook_data.map(person => person.name).includes(body.name)) {
+        return response.status(400).json({
+            error: "name must be unique"
+        })
+    }
+    else {
+        const person = {
+            id: Math.round(Math.random() * 10000),
+            name: body.name,
+            number: body.number
+        }
+        console.log(person)
+        phonebook_data = phonebook_data.concat(person)
+        response.json(person)
+    }
+})
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     phonebook_data = phonebook_data.filter(person => person.id !== id)

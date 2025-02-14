@@ -1,1 +1,9 @@
 DELETE http://localhost:3001/api/persons/3
+
+###
+POST http://localhost:3001/api/persons
+
+{
+    "name": "Poorvi Bhatia",
+    "number": "123-456-789"
+}

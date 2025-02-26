@@ -26,18 +26,17 @@ app.get('/api/persons/:id', (request, response) => {
     Person.findById(request.params.id).then(person => response.json(person))
 })
 app.get('/info', (request, response) => {
-    const num_people = phonebook_data.length
     const time = new Date()
-    response.send(`<div>Phonebook has info for ${num_people} people<div/>
+    Person.find({}).then(result => response.send(`<div>Phonebook has info for ${result.length} people<div/>
         <br/>
         <div>${time}<div/>`
-    )
+    ))
+
 })
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     Person.find({ name: body.name }).then(result => {
         if (result.length === 0) {
-            console.log("result.length === 0 is true")
             const person = new Person({
                 name: body.name,
                 number: body.number
@@ -46,25 +45,28 @@ app.post('/api/persons', (request, response) => {
         }
         else {
             const existingPerson = result[0]
-            return updatePerson(existingPerson, body)
+            const update = {
+                name: existingPerson.name,
+                number: body.number
+            }
+            Person.findByIdAndUpdate(existingPerson.id, update, { new: true }).then(updatedPerson => {
+                return response.json(updatedPerson)
+            }).catch(error => next(error))
         }
-    })
+    }).catch(error => next(error))
 }
 )
 
-const updatePerson = (existingPerson, body) => {
-    app.put(`/api/persons/:${existingPerson.id}`, (request, response, next) => {
-        console.log("existing person: " + JSON.stringify(existingPerson))
-        const update = {
-            name: existingPerson.name,
-            number: body.number
-        }
-        Person.findByIdAndUpdate(existingPerson.id, update, { new: true }).then(updatedPerson => {
-            console.log("updated person to be: " + JSON.stringify(updatedPerson))
-            return response.json(updatedPerson)
-        }).catch(error => next(error))
-    })
-}
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+    const update = {
+        name: body.name,
+        number: body.number
+    }
+    Person.findByIdAndUpdate(request.params.id, update, { new: true }).then(updatedPerson => {
+        return response.json(updatedPerson)
+    }).catch(error => next(error))
+})
 
 app.delete('/api/persons/:id', (request, response, next) => {
     Person.findByIdAndDelete(request.params.id).then(result => {

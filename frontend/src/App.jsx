@@ -81,7 +81,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchVal, setSearchVal] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
   const [notifyColor, setNotifyColor] = useState("green");
   const [notifyHide, setNotifyHide] = useState(true);
 
@@ -97,6 +97,7 @@ const App = () => {
     setErrorMessage(errorMsg);
     setTimeout(() => {
       setErrorMessage(null);
+      setNotifyHide(true);
     }, 5000);
   };
 

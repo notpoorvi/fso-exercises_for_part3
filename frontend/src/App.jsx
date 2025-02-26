@@ -122,6 +122,7 @@ const App = () => {
           personService
             .update(duplicate.id, personObject)
             .then((returnedPerson) => {
+              console.log("Person update succesful");
               setPersons(
                 persons.map((person) =>
                   person.id === duplicate.id ? returnedPerson : person
@@ -129,6 +130,7 @@ const App = () => {
               );
             })
             .catch((error) => {
+              console.log("Person update unsuccesful");
               modifyError(
                 false,
                 "red",
